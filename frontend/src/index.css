@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #f8fafc; /* Very light slate for enterprise contrast */
+    --foreground: #0f172a; /* slate-900 */
+
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+
+    --primary: #0f4a8a; /* Deep Enterprise Blue */
+    --primary-foreground: #ffffff; 
+
+    --secondary: #e2e8f0; /* slate-200 */
+    --secondary-foreground: #1e293b; 
+
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b; 
+
+    --accent: #e0f2fe; /* light blue accent */
+    --accent-foreground: #0369a1;
+
+    --destructive: #dc2626; /* red-600 */
+    --destructive-foreground: #ffffff;
+
+    --border: #cbd5e1; /* slate-300 */
+    --input: #e2e8f0;
+    --ring: #0f4a8a;
+
+    --radius: 0.35rem; /* Clean professional radius */
+  }
+
+  .dark {
+    --background: #0f172a;
+    --foreground: #f8fafc;
+
+    --card: #1e293b;
+    --card-foreground: #f8fafc;
+
+    --popover: #1e293b;
+    --popover-foreground: #f8fafc;
+
+    --primary: #3b82f6; /* Lighter blue for dark mode visibility */
+    --primary-foreground: #0f172a;
+
+    --secondary: #334155;
+    --secondary-foreground: #f8fafc;
+
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+
+    --accent: #334155;
+    --accent-foreground: #f8fafc;
+
+    --destructive: #7f1d1d;
+    --destructive-foreground: #f8fafc;
+
+    --border: #334155;
+    --input: #334155;
+    --ring: #3b82f6;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold text-foreground;
+  }
+  h1 { @apply text-4xl mb-6; }
+  h2 { @apply text-3xl mb-5; }
+  h3 { @apply text-2xl mb-4; }
+  h4 { @apply text-xl mb-3; }
+  p { @apply mb-4 last:mb-0 text-muted-foreground; }
+}
+
+/* Custom minimal scrollbar for enterprise feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
