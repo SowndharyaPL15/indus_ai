@@ -10,6 +10,10 @@ python-jose
 passlib[bcrypt]
 python-multipart
 langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+langchain-groq
 langgraph
 faiss-cpu
 sentence-transformers
@@ -20,4 +24,3 @@ openpyxl
 Pillow
 pytesseract
 reportlab
-langchain-groq
