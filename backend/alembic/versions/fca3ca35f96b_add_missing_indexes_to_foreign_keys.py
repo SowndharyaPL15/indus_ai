@@ -27,12 +27,6 @@ def upgrade() -> None:
     op.execute("DROP INDEX IF EXISTS ix_conflict_history_decision_case_id")
     op.execute("DROP TABLE IF EXISTS conflict_history CASCADE")
 
-    # Ensure all tables exist
-    import app.models  # noqa: F401
-    from app.db.base import Base
-    bind = op.get_bind()
-    Base.metadata.create_all(bind=bind)
-
     # Safely create indexes
     op.execute("CREATE INDEX IF NOT EXISTS ix_ai_responses_decision_case_id ON ai_responses (decision_case_id)")
     op.execute("CREATE INDEX IF NOT EXISTS ix_approval_requests_approved_by ON approval_requests (approved_by)")
