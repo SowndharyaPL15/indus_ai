@@ -35,12 +35,39 @@ encoded_password = urllib.parse.quote_plus(DB_PASSWORD)
 _DEFAULT_URL = f"postgresql+asyncpg://{DB_USER}:{encoded_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 raw_db_url = os.getenv("DATABASE_URL", _DEFAULT_URL)
 
-# Cloud providers (Render, Railway, Supabase, Neon) provide postgres:// or postgresql://
-# SQLAlchemy async engine requires postgresql+asyncpg://
-if raw_db_url.startswith("postgres://"):
-    raw_db_url = raw_db_url.replace("postgres://", "postgresql+asyncpg://", 1)
-elif raw_db_url.startswith("postgresql://") and not raw_db_url.startswith("postgresql+asyncpg://"):
-    raw_db_url = raw_db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+def clean_database_url_for_asyncpg(url: str) -> str:
+    # 1. Adapt scheme
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-DATABASE_URL: str = raw_db_url
+    # 2. Parse query parameters to remove/fix asyncpg incompatible params
+    parsed = urllib.parse.urlparse(url)
+    if parsed.query:
+        query_params = urllib.parse.parse_qs(parsed.query)
+        # asyncpg uses 'ssl' instead of 'sslmode'
+        if "sslmode" in query_params:
+            ssl_val = query_params.pop("sslmode")[0]
+            if ssl_val in ("require", "verify-ca", "verify-full", "prefer", "allow"):
+                query_params["ssl"] = ["require"]
+
+        # Remove libpq specific options that asyncpg doesn't accept
+        query_params.pop("channel_binding", None)
+        query_params.pop("gssencmode", None)
+        query_params.pop("target_session_attrs", None)
+
+        new_query = urllib.parse.urlencode(query_params, doseq=True)
+        url = urllib.parse.urlunparse((
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            parsed.params,
+            new_query,
+            parsed.fragment
+        ))
+    return url
+
+DATABASE_URL: str = clean_database_url_for_asyncpg(raw_db_url)
+
 
