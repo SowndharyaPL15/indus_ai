@@ -49,5 +49,5 @@ services:
 databases:
   - name: indus-db
     databaseName: indus_ai
-    user: postgres
+    user: indus_user
     plan: free
