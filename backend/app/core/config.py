@@ -33,4 +33,14 @@ import urllib.parse
 # Construct DB URL if not provided directly
 encoded_password = urllib.parse.quote_plus(DB_PASSWORD)
 _DEFAULT_URL = f"postgresql+asyncpg://{DB_USER}:{encoded_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-DATABASE_URL: str = os.getenv("DATABASE_URL", _DEFAULT_URL)
+raw_db_url = os.getenv("DATABASE_URL", _DEFAULT_URL)
+
+# Cloud providers (Render, Railway, Supabase, Neon) provide postgres:// or postgresql://
+# SQLAlchemy async engine requires postgresql+asyncpg://
+if raw_db_url.startswith("postgres://"):
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+elif raw_db_url.startswith("postgresql://") and not raw_db_url.startswith("postgresql+asyncpg://"):
+    raw_db_url = raw_db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+DATABASE_URL: str = raw_db_url
+

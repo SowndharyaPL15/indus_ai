@@ -32,6 +32,11 @@ export function useDashboardData() {
     queryFn: async () => (await api.get('/api/dashboard/activity')).data,
   });
 
+  const healthQuery = useQuery({
+    queryKey: ['system', 'health'],
+    queryFn: async () => (await api.get('/health')).data,
+  });
+
   const isLoading = 
     summaryQuery.isLoading || 
     intelligenceQuery.isLoading || 
@@ -55,13 +60,17 @@ export function useDashboardData() {
     complianceQuery.refetch();
     aiPerformanceQuery.refetch();
     activityQuery.refetch();
+    healthQuery.refetch();
   };
 
   return {
     summary: summaryQuery.data,
     intelligence: intelligenceQuery.data,
     knowledgeGrowth: knowledgeGrowthQuery.data,
+    knowledge: knowledgeGrowthQuery.data,
     compliance: complianceQuery.data,
+    conflicts: { total_conflicts: complianceQuery.data?.violations || 0 },
+    health: healthQuery.data,
     aiPerformance: aiPerformanceQuery.data,
     activity: activityQuery.data,
     isLoading,
@@ -69,3 +78,4 @@ export function useDashboardData() {
     refetchAll
   };
 }
+

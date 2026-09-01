@@ -1,0 +1,53 @@
+services:
+  # ── Backend Web Service (FastAPI) ───────────────────────────────────────────
+  - type: web
+    name: indus-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: indus-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 1440
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # ── Frontend Static Site (React + Vite) ─────────────────────────────────────
+  - type: web
+    name: indus-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: indus-backend
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+# ── PostgreSQL Database ───────────────────────────────────────────────────────
+databases:
+  - name: indus-db
+    databaseName: indus_ai
+    user: postgres
+    plan: free

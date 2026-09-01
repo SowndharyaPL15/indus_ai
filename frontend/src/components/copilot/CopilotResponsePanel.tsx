@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { CopilotResponse } from '@/hooks/useCopilot';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Copy, Check, Clock, FileText, Bot, ShieldCheck, ClipboardCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';

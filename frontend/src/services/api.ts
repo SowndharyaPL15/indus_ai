@@ -1,9 +1,18 @@
 import axios from 'axios';
 import { QueryClient } from '@tanstack/react-query';
 
+const getBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return 'http://localhost:8000';
+  if (!envUrl.startsWith('http://') && !envUrl.startsWith('https://') && !envUrl.startsWith('/')) {
+    return `https://${envUrl}`;
+  }
+  return envUrl;
+};
+
 // Enterprise API configuration
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

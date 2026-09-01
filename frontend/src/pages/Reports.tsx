@@ -10,9 +10,9 @@ export default function Reports() {
   const [caseId, setCaseId] = useState('');
   const [lastReport, setLastReport] = useState<any>(null);
 
-  const handleGenerate = (type: 'decision-case' | 'compliance' | 'audit') => {
-    if (!caseId.trim()) return;
-    generateReport.mutate({ type, caseId }, {
+  const handleGenerate = (type: 'decision-case' | 'compliance' | 'maintenance' | 'executive-summary') => {
+    if (!caseId.trim() && (type === 'decision-case' || type === 'maintenance')) return;
+    generateReport.mutate({ type, id: caseId.trim() || undefined }, {
       onSuccess: (responseData) => {
         setLastReport(responseData);
       }
@@ -22,7 +22,7 @@ export default function Reports() {
   const reportTypes = [
     { type: 'decision-case' as const, title: 'Decision Case Report', description: 'Full investigation summary with AI analysis, evidence, and recommendations.', icon: <FileText className="h-6 w-6" /> },
     { type: 'compliance' as const, title: 'Compliance Report', description: 'Regulatory compliance assessment with identified gaps and risk ratings.', icon: <ShieldCheck className="h-6 w-6" /> },
-    { type: 'audit' as const, title: 'Audit Trail Report', description: 'Complete timeline of system events, actions, and user decisions.', icon: <BarChart3 className="h-6 w-6" /> },
+    { type: 'maintenance' as const, title: 'Maintenance Report', description: 'Machine-specific maintenance history, logs, and diagnostic summary.', icon: <BarChart3 className="h-6 w-6" /> },
   ];
 
   return (
