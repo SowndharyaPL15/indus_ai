@@ -1,13 +1,8 @@
-"""
-INDUS AI — Database Initialization
-
-Handles connection checking, auto-creation of tables (dev only), and basic initialization logic.
-"""
-
 import logging
 from sqlalchemy import text
 from app.db.database import engine
 from app.db.base import Base
+import app.models  # noqa: F401 Ensure all models are registered on metadata
 from app.core.config import APP_ENV
 
 logger = logging.getLogger(__name__)
@@ -25,17 +20,11 @@ async def check_database_connection() -> bool:
 
 
 async def create_tables() -> None:
-    """Creates all tables. Should ONLY be used in development.
-    In production, use Alembic migrations.
-    """
-    if APP_ENV != "development":
-        logger.warning("create_tables() called outside development mode. Skipping.")
-        return
-
-    logger.info("Creating tables (development mode)...")
+    """Creates all tables if they do not exist."""
+    logger.info("Validating database schema and tables...")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    logger.info("Tables created successfully.")
+    logger.info("Database tables validated successfully.")
 
 
 async def drop_tables_dev_only() -> None:
@@ -55,8 +44,5 @@ async def initialize_database() -> None:
     if not is_connected:
         raise Exception("Could not connect to the database on startup.")
     
-    if APP_ENV == "development":
-        # In dev mode, we can optionally auto-create tables if they don't exist
-        # However, relying on alembic is better practice. For now, we will create them
-        # if the user specifically runs reset_database, but we can also ensure they exist.
-        await create_tables()
+    await create_tables()
+
