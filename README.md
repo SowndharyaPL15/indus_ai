@@ -2,6 +2,9 @@
 
 INDUS AI is an Industrial Cognitive Memory System that helps factories preserve, search, connect, and continuously improve industrial knowledge from documents, maintenance records, engineer feedback, SOPs, incidents, and compliance data.
 
+##Website URL
+https://indus-ai-frontend.onrender.com
+
 ## Tech Stack
 - **Frontend**: React + Vite + Tailwind CSS
 - **Backend**: FastAPI
