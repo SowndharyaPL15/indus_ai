@@ -16,7 +16,7 @@ langchain-text-splitters
 langchain-groq
 langgraph
 faiss-cpu
-sentence-transformers
+fastembed
 pypdf
 python-docx
 pandas
